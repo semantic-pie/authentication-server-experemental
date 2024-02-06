@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "dependencies": {
+    "client-oauth2": "^4.3.3",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <h3>Auth Server</h3>
+      <button onclick="auth()">auth</button>
+      <div style="margin-top: 10px">
+        <button onclick="loadJWT()">jwt</button>
+        <input id="jwt" type="text" style="width: 500px" />
+      </div>
+
+      <div style="margin-top: 10px">
+        <div style="margin-top: 10px">
+          <label for="clientId">Clien ID</label>
+          <input disabled id="clientId" type="text" style="width: 500px" />
+        </div>
+
+        <div style="margin-top: 10px">
+          <label for="clientSecret">Clien Secret</label>
+          <input disabled id="clientSecret" type="text" style="width: 500px" />
+        </div>
+
+        <div style="margin-top: 10px">
+          <label for="accessTokenUri">AccessToken Uri</label>
+          <input
+            disabled
+            id="accessTokenUri"
+            type="text"
+            style="width: 500px"
+          />
+        </div>
+
+        <div style="margin-top: 10px">
+          <label for="authorizationUri">Authorization Uri</label>
+          <input
+            disabled
+            id="authorizationUri"
+            type="text"
+            style="width: 500px"
+          />
+        </div>
+
+        <div style="margin-top: 10px">
+          <label for="redirectUri">Redirect Uri</label>
+          <input disabled id="redirectUri" type="text" style="width: 500px" />
+        </div>
+
+        <div style="margin-top: 10px">
+          <label for="scopes">Scopes</label>
+          <input disabled id="scopes" type="text" style="width: 500px" />
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div>
+      <h3>Resource Server</h3>
+      <button onclick="find()">find resources</button>
+      <label for="url"></label>
+      <input
+        id="url"
+        type="text"
+        value="http://localhost:8080/kek"
+        style="width: 500px"
+      />
+    </div>
+
+    <hr />
+
+    <div>
+      <h3>Response</h3>
+      <p id="response"></p>
+    </div>
+  </body>
+  <script>
+    loadOauth2Config()
+
+    function _(id) {
+      return document.getElementById(id)
+    }
+
+    function auth() {
+      location.href = "http://localhost:3000/auth"
+    }
+
+    function find() {
+      const headers = new Headers()
+      const jwt = "Bearer " + getCookie("accessToken")
+      if (jwt) headers.set("Authorization", jwt)
+      const url = _("url").value
+
+      fetch(url, { headers: headers })
+        .then(async (res) => {
+          const data = await res.json()
+          _("response").textContent = JSON.stringify(data, null, "\t")
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+          _("response").textContent = "401 (Unauthorized)"
+        })
+    }
+
+    function loadOauth2Config() {
+      fetch("http://localhost:3000/oauth/config")
+        .then((res) => res.json())
+        .then((data) => {
+          _("clientId").value = data.clientId
+          _("clientSecret").value = data.clientSecret
+          _("accessTokenUri").value = data.accessTokenUri
+          _("authorizationUri").value = data.authorizationUri
+          _("redirectUri").value = data.redirectUri
+          _("scopes").value = data.scopes
+        })
+    }
+
+    function loadJWT() {
+      _("jwt").value = getCookie("accessToken")
+    }
+
+    function setCookie(name, value, days) {
+      var expires = ""
+      if (days) {
+        var date = new Date()
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
+        expires = "; expires=" + date.toUTCString()
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/"
+    }
+
+    function getCookie(name) {
+      var nameEQ = name + "="
+      var ca = document.cookie.split(";")
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i]
+        while (c.charAt(0) == " ") c = c.substring(1, c.length)
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length)
+      }
+      return null
+    }
+  </script>
+</html>

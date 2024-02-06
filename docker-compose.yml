@@ -1,0 +1,40 @@
+version: "3.1"
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    network_mode: host
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: keker
+      MONGO_INITDB_ROOT_PASSWORD: kek
+    ports:
+      - "27017:27017"
+  auth-server:
+    container_name: auth-server
+    network_mode: host
+    build:
+      context: ./auth-server
+
+  simple-client:
+    container_name: simple-client
+    network_mode: host
+    build:
+      context: ./simple-client
+    depends_on:
+      resources-server:
+        condition: service_started
+        required: true
+
+  resources-server:
+    container_name: resources-server
+    network_mode: host
+    build:
+      context: ./resources-server
+    depends_on:
+      mongo:
+        condition: service_started
+        required: true
+      auth-server:
+        condition: service_started
+        required: true
