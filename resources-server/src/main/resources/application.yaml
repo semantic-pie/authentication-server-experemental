@@ -1,0 +1,23 @@
+spring:
+  data:
+    mongodb:
+      port: 27017
+      uri: mongodb://keker:kek@localhost/test?authSource=admin
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
+
+      client:
+        provider:
+          kekcloud:
+            issuer-uri: http://127.0.0.1:9000
+        registration:
+          kek-admin-client:
+            provider: kekcloud
+            client-id: kek-admin-client
+            client-secret: MY SECRET
+            authorization-grant-type: authorization_code
+            redirect-uri: http://127.0.0.1:9090/login/oauth2/code/{registrationId}
+            scope: first,second,openid
