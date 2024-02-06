@@ -1,0 +1,33 @@
+{
+  "properties": [
+    {
+      "name": "authserver.registered-clients.inmemory-client.client-id",
+      "type": "java.lang.String",
+      "description": "Oauth2 Client Id"
+    },
+    {
+      "name": "authserver.registered-clients.inmemory-client.client-secret",
+      "type": "java.lang.String",
+      "description": "Tsss, it's very secret"
+    },
+    {
+      "name": "authserver.registered-clients.inmemory-client.redirectUri",
+      "type": "java.lang.String",
+      "description": "Clients callback"
+    },
+    {
+      "name": "authserver.registered-clients.inmemory-client.scopes",
+      "description": "Access scopes"
+    },
+    {
+      "name": "authserver.useradmin.username",
+      "type": "java.lang.String",
+      "description": "Admin username"
+    },
+    {
+      "name": "authserver.useradmin.password",
+      "type": "java.lang.String",
+      "description": "Admin password"
+    }
+  ]
+}
