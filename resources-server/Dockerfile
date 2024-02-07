@@ -1,9 +1,44 @@
-FROM amazoncorretto:17-alpine-jdk
+#
+# Set a variable that can be used in all stages.
+#
+ARG BUILD_HOME=/server
 
-WORKDIR /app
+#
+# Gradle image for the build stage.
+#
+FROM gradle:jdk17 as build-image
 
-COPY build/libs/resources-server-0.0.1-SNAPSHOT.jar /app/resources-server.jar
+COPY . $BUILD_HOME
+#
+# Set the working directory.
+#
+ARG BUILD_HOME
+ENV APP_HOME=$BUILD_HOME
+WORKDIR $APP_HOME
 
-EXPOSE 8080
+#
+# Copy the Gradle config, source code, and static analysis config
+# into the build container.
+#
+COPY --chown=gradle:gradle build.gradle settings.gradle $APP_HOME/
+COPY --chown=gradle:gradle src $APP_HOME/src
 
-CMD ["java", "-jar", "resources-server.jar"]
+##
+## Build the application.
+##
+RUN gradle clean bootJar
+
+##
+## Java image for the application to run in.
+##
+FROM openjdk
+#
+##
+## Copy the jar file in and name it app.jar.
+#
+ARG BUILD_HOME
+ENV APP_HOME=$BUILD_HOME
+COPY --from=build-image $APP_HOME/build/libs/*.jar app.jar
+
+## The command to run when the container starts.
+ENTRYPOINT ["java", "-jar", "app.jar"]
