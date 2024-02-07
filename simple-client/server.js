@@ -2,6 +2,7 @@ import ClientOAuth2 from "client-oauth2"
 import cookieParser from "cookie-parser"
 import express from "express"
 import http from "http"
+import path from "path"
 
 const config = {
   clientId: "kek-admin-client",
@@ -46,7 +47,7 @@ app.get("/oauth/config", (req, res) => res.send(config))
 
 app.get("/", (req, res) =>
   res.sendFile("index.html", {
-    root: "/Users/glebchanskiy/temp/authentication-server-experemental/simple-client",
+    root: path.resolve(path.dirname("")),
   })
 )
 
